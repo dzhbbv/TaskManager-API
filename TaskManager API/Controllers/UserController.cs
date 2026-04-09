@@ -12,9 +12,10 @@ public class UserController(ILogger<UserController> logger, IUserRepoService use
 {
     [Authorize]
     [HttpPut("{id}")]
-    public IActionResult Update(Guid id, [FromBody] string newName)
+    public async Task<IActionResult> Update(Guid id, [FromBody] string newName) // async Task
     {
-        var success = userRepo.UpdateUser(id, new UserResponseDto(id, newName));
+        // Добавляем await
+        var success = await userRepo.UpdateUser(id, new UserResponseDto(id, newName));
         if (!success) return NotFound("User not found");
         logger.LogInformation($"User {id} updated to {newName}");
         return Ok();
@@ -22,43 +23,37 @@ public class UserController(ILogger<UserController> logger, IUserRepoService use
     
     [Authorize]
     [HttpDelete("{id}")]
-    public IActionResult Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id) // async Task
     {
-        if (!userRepo.DeleteUser(id)) return NotFound();
+        if (!await userRepo.DeleteUser(id)) return NotFound(); // await
         logger.LogInformation($"User {id} deleted");
         return Ok();
     }
     
     [Authorize]
     [HttpGet("users")]
-    public IActionResult GetUsers() => Ok(userRepo.GetUsers());
+    public async Task<IActionResult> GetUsers() => Ok(await userRepo.GetUsers()); // await
     
     [Authorize]
     [HttpGet("byName/{name}")]
-    public IActionResult GetUserByName(string name)
+    public async Task<IActionResult> GetUserByName(string name) // async Task
     {
-        var user = userRepo.GetUserByName(name);
+        var user = await userRepo.GetUserByName(name); // await
         if (user is null) return BadRequest("User not found");
-        var response = userRepo.GetUserById(user.Id);
+        
+        var response = await userRepo.GetUserById(user.Id); // await
         return Ok(response);
     }
-    
-    [Authorize]
-    [HttpGet("byId/{id}")]
-    public IActionResult GetUserById(Guid id)
-    {
-        var response = userRepo.GetUserById(id);
-        if (response is null) return BadRequest("User not found");
-        return Ok(response);
-    }
-    
+
     [HttpPost("login")]
-    public IActionResult Login([FromBody] UserDto userDto)
+    public async Task<IActionResult> Login([FromBody] UserDto userDto) // async Task
     {
-        var user = userRepo.GetUserByName(userDto.Name);
+        var user = await userRepo.GetUserByName(userDto.Name); // await
+        
+        // authService.VerifyPassword обычно синхронный (просто хэш чекает), его можно без await
         if (user is null || !authService.VerifyPassword(userDto.Password, user.PasswordHash))
         { 
-            logger.LogInformation($"Fucking slave {userDto.Name} login failed (For test: password is {userDto.Password})");
+            logger.LogInformation($"Fucking slave {userDto.Name} login failed");
             return Unauthorized("Invalid credentials");
         }
 
@@ -67,11 +62,12 @@ public class UserController(ILogger<UserController> logger, IUserRepoService use
     }
     
     [HttpPost("register")]
-    public IActionResult Register([FromBody] UserDto userDto)
+    public async Task<IActionResult> Register([FromBody] UserDto userDto) // async Task
     {
-        var response = userRepo.CreateUser(userDto);
+        var response = await userRepo.CreateUser(userDto); // await
         if (response is null) return BadRequest("User already exists");
-        logger.LogInformation($"User {userDto.Name} registered (For test: password is {userDto.Password})");
+        
+        logger.LogInformation($"User {userDto.Name} registered");
         return Ok(response);
     }
 }

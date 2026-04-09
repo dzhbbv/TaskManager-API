@@ -5,7 +5,7 @@ using TaskManager_API.Models;
 namespace TaskManager_API.Services;
 using BCrypt.Net;
 
-public class AuthService : IAuthService
+public class AuthService(IConfiguration config) : IAuthService
 {
     public string CreateToken(User user)
     {
@@ -15,11 +15,14 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
         };
 
-        var key = new SymmetricSecurityKey("Three_hundred_backs@GymBoss-Semen"u8.ToArray());
+        var keyStr = config["JwtSettings:Key"] 
+                     ?? throw new InvalidOperationException("JWT Key not found");
+        
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(keyStr));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var jwt = new JwtSecurityToken(
-            issuer: "DungeonMaster",
-            audience: "Client",
+            issuer: config["JwtSettings:Issuer"],
+            audience: config["JwtSettings:Audience"],
             claims: claims,
             expires: DateTime.Now.AddMinutes(30),
             signingCredentials: creds

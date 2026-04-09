@@ -4,10 +4,10 @@ namespace TaskManager_API.Repository;
 
 public interface IUserRepository
 {
-    User AddUser(User user);
-    bool UpdateUser(Guid id, User user); 
-    bool DeleteUser(Guid id);
-    User? GetUser(Guid id);
-    User? GetByName(string name);
-    IEnumerable<User> GetAllUsers();
+    Task AddUser(User user);
+    Task<bool> UpdateUser(User user); 
+    Task<bool> DeleteUser(Guid id);
+    Task<User?> GetUser(Guid id);
+    Task<User?> GetByName(string name);
+    Task<IEnumerable<User>> GetAllUsers();
 }

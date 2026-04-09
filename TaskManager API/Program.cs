@@ -1,21 +1,29 @@
-using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
-using TaskManager_API.Models;
 using TaskManager_API.Repository;
+using TaskManager_API.Repository.Database;
+// using TaskManager_API.Repository.InMemory;
 using TaskManager_API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+// Database
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(connectionString));
+builder.Services.AddScoped<IUserRepository, DbUserRepo>();
+builder.Services.AddScoped<ITaskRepository, DbTaskRepo>();
 // Memory
-builder.Services.AddSingleton<ConcurrentDictionary<Guid, User>>();
-builder.Services.AddSingleton<ConcurrentDictionary<Guid, TodoTask>>();
-// Repositories
-builder.Services.AddSingleton<ITaskRepository, InMemoryTaskRepo>();
-builder.Services.AddSingleton<IUserRepository, InMemoryUserRepo>();
+// builder.Services.AddSingleton<ConcurrentDictionary<Guid, User>>();
+// builder.Services.AddSingleton<ConcurrentDictionary<Guid, TodoTask>>();
+
+// builder.Services.AddSingleton<ITaskRepository, InMemoryTaskRepo>();
+// builder.Services.AddSingleton<IUserRepository, InMemoryUserRepo>();
+
 // Services
 builder.Services.AddScoped<IUserRepoService, UserRepoService>();
 builder.Services.AddScoped<ITaskRepoService, TaskRepoService>();
@@ -25,15 +33,19 @@ builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
+    var jwtKey = builder.Configuration["JwtSettings:Key"] 
+                 ?? throw new InvalidOperationException("JWT Key is missing in config");
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = "DungeonMaster",
-        ValidAudience = "Client",
-        IssuerSigningKey = new SymmetricSecurityKey("Three_hundred_backs@GymBoss-Semen"u8.ToArray())
+        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+        ValidAudience = builder.Configuration["JwtSettings:Audience"],
+
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtKey))
     };
 });
 var app = builder.Build();

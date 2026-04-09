@@ -4,9 +4,9 @@ namespace TaskManager_API.Repository;
 
 public interface ITaskRepository
 {
-    TodoTask AddTask(TodoTask task);
-    bool UpdateTask(Guid id, TodoTask task);
-    bool DeleteTask(Guid id);
-    TodoTask? GetTaskById(Guid id);
-    IEnumerable<TodoTask> GetAllTasks();
+    Task<TodoTask> AddTask(TodoTask task);
+    Task<bool> UpdateTask(TodoTask task);
+    Task<bool> DeleteTask(Guid id);
+    Task<TodoTask?> GetTaskById(Guid id);
+    Task<IEnumerable<TodoTask>> GetAllTasks();
 }
