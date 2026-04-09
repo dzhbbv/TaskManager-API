@@ -68,8 +68,8 @@ After running the app, open the Swagger UI in your browser. It allows you to:
 - [x] In-Memory Data Storage
 - [x] **JWT Authentication System**
 - [x] **Secure Password Hashing (BCrypt)**
-- [ ] **Next Step:** Entity Framework Core integration
-- [ ] PostgreSQL Database connection
+- [x] Entity Framework Core integration
+- [x] PostgreSQL Database connection
 - [ ] Docker Containerization
 ---
 ## Author
