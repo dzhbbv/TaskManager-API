@@ -8,7 +8,7 @@ A robust Task Management Backend built with **.NET 10**. This project implements
 * **Framework:** .NET 10.0 (Web API)
 * **Security:** **JWT (JSON Web Tokens)** & **BCrypt** password hashing
 * **Design Patterns:** Repository Pattern, Dependency Injection, DTOs
-* **Storage:** In-Memory (SQL/PostgreSQL with EF Core integration coming soon)
+* **Storage:** SQL/PostgreSQL with EF Core integration
 * **OS:** Developed on **Arch Linux** (Hyprland) using **JetBrains Rider**
 
 ---
