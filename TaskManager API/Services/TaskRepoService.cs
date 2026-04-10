@@ -25,16 +25,10 @@ public class TaskRepoService(ITaskRepository repo) : ITaskRepoService
         var existing = await repo.GetTaskById(id);
         if (existing is null || existing.UserId != ownerId) return false;
         
-        if (taskDto.Title != "")
-            existing.Title = taskDto.Title;
-        if (taskDto.Description != "")
-            existing.Description = taskDto.Description;
-        switch (taskDto.Status)
-        {
-            case "InProgress": existing.Status = TaskStatus.InProgress; break;
-            case "Done": existing.Status = TaskStatus.Done; break;
-            case "Cancelled": existing.Status = TaskStatus.Cancelled; break;
-        }
+        if (!string.IsNullOrWhiteSpace(taskDto.Title)) existing.Title = taskDto.Title;
+        if (!string.IsNullOrWhiteSpace(taskDto.Description)) existing.Description = taskDto.Description;
+
+        existing.Status = taskDto.Status;
         
         return await repo.UpdateTask(existing);
     }

@@ -7,7 +7,7 @@ public record TodoTaskDto(string Title, string Description);
 public record TodoTaskResponseDto(Guid Id, string Title, string Description, TaskStatus Status, DateTime CreatedAt); 
 
 // Обновленная задача от пользователя
-public record UpdateTodoTaskDto(string Title, string Description, string Status);
+public record UpdateTodoTaskDto(string Title, string Description, TaskStatus Status);
 
 public record UserDto(string Name, string Password);
 
