@@ -12,6 +12,26 @@ public class AppDbContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<User>()
+            .Property(t => t.PasswordHash)
+            .HasMaxLength(100)
+            .IsRequired();
+        
+        modelBuilder.Entity<User>()
+            .Property(t => t.Name)
+            .HasMaxLength(40)
+            .IsRequired();
+        
+        modelBuilder.Entity<TodoTask>()
+            .Property(t => t.Status)
+            .HasConversion<string>()
+            .HasMaxLength(50);
+        
+        modelBuilder.Entity<TodoTask>()
+            .Property(t => t.Status)
+            .HasMaxLength(100)
+            .IsRequired();
+        
         modelBuilder.Entity<TodoTask>()
             .Property(t => t.Title)
             .HasMaxLength(100)

@@ -4,10 +4,10 @@ namespace TaskManager_API.Models;
 public record TodoTaskDto(string Title, string Description);
 
 // То что клиент получает по GET-запросу
-public record TodoTaskResponseDTO(Guid Id, string Title, string Description, TaskStatus Status, DateTime CreatedAt); 
+public record TodoTaskResponseDto(Guid Id, string Title, string Description, TaskStatus Status, DateTime CreatedAt); 
 
 // Обновленная задача от пользователя
-public record UpdateTodoTaskDto(string Title, string Description, TaskStatus Status);
+public record UpdateTodoTaskDto(string Title, string Description, string Status);
 
 public record UserDto(string Name, string Password);
 

@@ -1,11 +1,10 @@
 namespace TaskManager_API.Models;
 
+public enum TaskStatus { New, InProgress, Done, Cancelled }
+
 public class TodoTask
 {
-    // Пустой конструктор для EF Core
-    private TodoTask() { } 
-
-    // Твой текущий конструктор
+    
     public TodoTask(Guid id, string title, string description, Guid userId, TaskStatus status, DateTime createdAt)
     {
         Id = id;
@@ -26,8 +25,6 @@ public class TodoTask
 
 public class User
 {
-    private User() { }
-
     public User(Guid id, string name, string passwordHash)
     {
         Id = id;
@@ -39,5 +36,3 @@ public class User
     public string Name { get; set; }
     public string PasswordHash { get; init; }
 }
-
-public enum TaskStatus {New, InProgress, Done, Canceled}
