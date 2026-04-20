@@ -46,14 +46,13 @@ public class UserController(ILogger<UserController> logger, IUserRepoService use
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] UserDto userDto) // async Task
+    public async Task<IActionResult> Login([FromBody] UserDto userDto)
     {
-        var user = await userRepo.GetUserByName(userDto.Name); // await
+        var user = await userRepo.GetUserByName(userDto.Name);
         
-        // authService.VerifyPassword обычно синхронный (просто хэш чекает), его можно без await
         if (user is null || !authService.VerifyPassword(userDto.Password, user.PasswordHash))
         { 
-            logger.LogInformation($"Fucking slave {userDto.Name} login failed");
+            logger.LogInformation($"User {userDto.Name} login failed");
             return Unauthorized("Invalid credentials");
         }
 
@@ -62,9 +61,9 @@ public class UserController(ILogger<UserController> logger, IUserRepoService use
     }
     
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] UserDto userDto) // async Task
+    public async Task<IActionResult> Register([FromBody] UserDto userDto) 
     {
-        var response = await userRepo.CreateUser(userDto); // await
+        var response = await userRepo.CreateUser(userDto);
         if (response is null) return BadRequest("User already exists");
         
         logger.LogInformation($"User {userDto.Name} registered");
