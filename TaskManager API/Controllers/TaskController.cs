@@ -39,6 +39,15 @@ public class TaskController(ITaskRepoService taskRepo, ILogger<TaskController> l
         logger.LogInformation($"Task {id} was updated ({update.Title})");
         return Ok();
     }
+
+    [HttpGet("{id}/byStatus")]
+    public async Task<IActionResult> GetTasksByStatus(Guid id, [FromQuery] string status)
+    {
+        var response = await taskRepo.GetTasksByStatus(id, status);
+        return Ok(response);
+    }
+    
+    
     
     [HttpGet("{id}")]
     public async Task<IActionResult> GetTask(Guid id)

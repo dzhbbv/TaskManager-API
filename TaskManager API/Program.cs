@@ -4,7 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using TaskManager_API.Repository;
 using TaskManager_API.Repository.Database;
-// using TaskManager_API.Repository.InMemory;
 using TaskManager_API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,12 +20,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 builder.Services.AddScoped<IUserRepository, DbUserRepo>();
 builder.Services.AddScoped<ITaskRepository, DbTaskRepo>();
-// Memory
-// builder.Services.AddSingleton<ConcurrentDictionary<Guid, User>>();
-// builder.Services.AddSingleton<ConcurrentDictionary<Guid, TodoTask>>();
-
-// builder.Services.AddSingleton<ITaskRepository, InMemoryTaskRepo>();
-// builder.Services.AddSingleton<IUserRepository, InMemoryUserRepo>();
 
 // Services
 builder.Services.AddScoped<IUserRepoService, UserRepoService>();
@@ -54,16 +47,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 var app = builder.Build();
 
-// --- СЕКЦИЯ MIDDLEWARE ---
-// 1. Генерируем сам документ (чертеж API) по адресу /openapi/v1.json
+// Middleware
 app.MapOpenApi(); 
-// 2. Подключаем Scalar (визуализатор), который читает этот чертеж
 if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
-// 3. Авторизация и аутентификация
+
 app.UseAuthentication();
 app.UseAuthorization();
-// 4. Маппим контроллеры
+
 app.MapControllers();
 
 app.Run();

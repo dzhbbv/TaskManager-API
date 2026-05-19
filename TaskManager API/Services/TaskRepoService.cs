@@ -6,11 +6,17 @@ namespace TaskManager_API.Services;
 
 public class TaskRepoService(ITaskRepository repo) : ITaskRepoService
 {
+    public async Task<IEnumerable<TodoTaskResponseDto>> GetTasksByStatus(Guid ownerId, string status)
+    {
+        var tasks = await repo.GetUserTasks(ownerId);
+        return tasks.Where(t => t.Status.ToString() == status) 
+            .Select(u => new TodoTaskResponseDto(u.Id, u.Title, u.Description, u.Status, u.CreatedAt));
+    }
+    
     public async Task<IEnumerable<TodoTaskResponseDto>> GetUserTasks(Guid ownerId)
     {
-        var tasks = await repo.GetAllTasks();
-        return tasks.Where(u => u.UserId == ownerId)
-                    .Select(u => new TodoTaskResponseDto(u.Id, u.Title, u.Description, u.Status, u.CreatedAt));
+        var tasks = await repo.GetUserTasks(ownerId);
+        return tasks.Select(u => new TodoTaskResponseDto(u.Id, u.Title, u.Description, u.Status, u.CreatedAt));
     }
     
     public async Task<TodoTaskResponseDto?> GetTask(Guid id, Guid ownerId)
@@ -60,6 +66,8 @@ public class TaskRepoService(ITaskRepository repo) : ITaskRepoService
 
 public interface ITaskRepoService
 {
+    Task<IEnumerable<TodoTaskResponseDto>> GetTasksByStatus(Guid ownerId, string status);
+    
     Task<TodoTaskResponseDto> CreateTask(TodoTaskDto taskDto, Guid ownerId);
     
     Task<bool> DeleteTask(Guid id, Guid ownerId);

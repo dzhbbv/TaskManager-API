@@ -8,5 +8,5 @@ public interface ITaskRepository
     Task<bool> UpdateTask(TodoTask task);
     Task<bool> DeleteTask(Guid id);
     Task<TodoTask?> GetTaskById(Guid id);
-    Task<IEnumerable<TodoTask>> GetAllTasks();
+    Task<IEnumerable<TodoTask>> GetUserTasks(Guid ownerId);
 }

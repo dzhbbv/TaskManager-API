@@ -5,7 +5,7 @@ namespace TaskManager_API.Repository.Database;
 
 public class DbTaskRepo(AppDbContext db) : ITaskRepository
 {
-    public async Task<IEnumerable<TodoTask>> GetAllTasks() => await db.TodoTasks.ToListAsync();
+    public async Task<IEnumerable<TodoTask>> GetUserTasks(Guid ownerId) => await db.TodoTasks.Where(t => t.UserId == ownerId).ToListAsync();
 
     public async Task<bool> UpdateTask(TodoTask task)
     {
